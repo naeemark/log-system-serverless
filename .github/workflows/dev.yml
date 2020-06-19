@@ -1,0 +1,28 @@
+name: CI/CD-Develop
+
+on:
+  push:
+    branches:
+      - "x-develop"
+
+jobs:
+  Build-and-Deploy-to-Dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Lint Check
+        run: yarn lint
+
+      - name: Serverless Deploy
+        run: npx serverless deploy --stage dev
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
